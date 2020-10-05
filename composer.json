@@ -1,0 +1,11 @@
+{
+    "name": "chkon/plugin-composer",
+    "description": "plugin of list and organize the pluging composer",
+    "authors": [
+        {
+            "name": "nekocheik",
+            "email": "cheik.kone@hetic.net"
+        }
+    ],
+    "require": {}
+}
