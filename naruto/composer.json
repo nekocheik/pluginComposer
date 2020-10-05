@@ -1,0 +1,27 @@
+{
+    "name": "tigerb/naruto",
+    "description": "An object-oriented multi process manager for PHP",
+    "type": "project",
+    "homepage": "http://tigerb.cn",
+    "minimum-stability": "stable",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "TIGERB",
+            "email": "tigerbcode@gmail.com"
+        }
+    ],
+    "require": {
+    },
+    "autoload": {
+        "psr-4": {
+            "Naruto\\": "/src/",
+            "App\\": "/app/"
+        }
+    },
+    "scripts": {
+        "post-root-project-cmd": [
+            "cp .env.example .env"
+        ]
+    }
+}

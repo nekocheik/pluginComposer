@@ -1,0 +1,123 @@
+<?php
+/****************************************************
+ *                     naruto                       *
+ *                                                  *
+ * An object-oriented multi process manager for PHP *
+ *                                                  *
+ *                    TIERGB                        *
+ *           <https://github.com/TIGERB>            *
+ *                                                  *
+ ****************************************************/
+
+/**
+ * 命令行参数list
+ */
+$help = function () {
+    $string =  <<<HELP
+    \033[36m Usage \033[0m:
+        php naruto --<arguments>=<value> ...
+
+    \033[36m Example \033[0m:
+        php naruto --worker-num=5 --passwd=123456
+
+    \033[36m Params mean \033[0m:
+        \033[33m worker-num \033[0m: Worker start number
+        \033[33m passwd \033[0m: Unix user passwd
+        \033[33m help \033[0m: Display command list
+
+                       _        
+                      | |       
+_ __   __ _ _ __ _   _| |_ ___  
+| '_ \ / _` | '__| | | | __/ _ \ 
+| | | | (_| | |  | |_| | || (_) |
+|_| |_|\__,_|_|   \__,_|\__\___/ .TIGERB.cn
+
+An object-oriented multi process manager for PHP
+
+Version: 0.5.0
+    \n
+HELP;
+
+    die($string);
+};
+
+/**
+ * 获取参数
+ */
+if (count($argv) === 1) {
+    $help();
+}
+$input = [];
+foreach ($argv as $v) {
+    preg_match_all('/^--(.*)/', $v, $match);
+    if (isset($match[1][0]) && ! empty($match[1][0])) {
+        $match = explode('=', $match[1][0]);
+        if ($match[0] === 'help') {
+            $help();
+        }
+        if (isset($match[1])) {
+            $input[$match[0]] = $match[1];
+        }
+    }
+}
+
+// require composer autoload file
+require(__DIR__ . '/vendor/autoload.php');
+
+// register autoload
+spl_autoload_register('autoload');
+function autoload($class)
+{
+	$classOrigin = $class;
+    $classInfo   = explode('\\', $class);
+    $className   = array_pop($classInfo);
+    foreach ($classInfo as &$v) {
+        $v = strtolower($v);
+    }
+    unset($v);
+    array_push($classInfo, $className);
+    $class       = implode('\\', $classInfo);
+    $class       = str_replace('naruto', 'src', $class);
+    $classPath   = __DIR__ . '/'.str_replace('\\', '/', $class) . '.php';
+    require($classPath);
+}
+
+/* -----------------------demo------------------- */
+
+use Naruto\Manager;
+use Naruto\Process;
+use Exception as Ex;
+use App\Demo\Test;
+
+/**
+ * example
+ * 
+ * $config = [
+ * 		'passwd' => '123456', // unix user passwd
+ * 		'worker_num' => 5, // worker start number
+ * 		'hangup_loop_microtime' => 200000, // master&worker hangup loop microtime unit/μs
+ * 		'pipe_dir' => '/tmp/', // the directory name of the process's pipe will be storaged
+ * ]
+ * new Manager($config, $closure)
+ */
+try {
+	new Manager([
+        'os'         => $input['os']?? 'Linux',
+		'passwd' 	 => $input['passwd']?? '',
+		'worker_num' => $input['worker-num']?? 5,
+		// 'pipe_dir'   => '/tmp/naruto/'
+		// 'hangup_loop_microtime' => 200000
+		], function (Process $worker) {
+			// mock business logic
+            (new Test())->businessLogic();
+		}
+	);
+} catch (Ex $e) {
+	ProcessException::error([
+		'msg' => [
+			'msg'  => $e->getMessage(),
+			'file' => $e->getFile(),
+			'line' => $e->getLine(),
+		]
+	]);
+}

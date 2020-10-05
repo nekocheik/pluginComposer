@@ -7,5 +7,11 @@
             "email": "cheik.kone@hetic.net"
         }
     ],
-    "require": {}
+    "require": {
+        "scssphp/scssphp": "^1.2",
+        "symfony/var-dumper": "^4.4",
+        "symfony/http-foundation": "^4.4",
+        "laravel/framework": "^5.8",
+        "irstea/phpstan-config": "^3.0"
+    }
 }
