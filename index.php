@@ -1,4 +1,4 @@
-<?php  
+<?php
 
 require('./organizer.php');
 
@@ -8,19 +8,19 @@ $dependencies = json_decode(json_encode($mainComposerFile), true)['packages'];
 $underDependances = [];
 
 foreach ($dependencies as $dependencie) {
-  $packageParentName = $dependencie['name'];
-  if (  $dependencie['require-dev']) {
-    foreach ($dependencie['require-dev'] as $key => $underDependance) {
-      if ( !isset($underDependance[$key])) {
-        $underDependances[$key] = []; 
-        $underDependances[$key][$packageParentName] =  $underDependance;
-      } else {
-        var_dump('ici');
-        $underDependance[$key][$packageParentName] = $underDependance;
-      };
+    $packageParentName = $dependencie['name'];
+    $packageParentVersion = $dependencie['version'];
+    if ($dependencie['require-dev']) {
+        foreach ($dependencie['require-dev'] as $key => $underDependance) {
+            if (!isset($underDependance[$key])) {
+                $underDependances[$key] = [];
+                $underDependances[$key][$underDependance] = [$packageParentName => '0'];
+            } else {
+                var_dump('ici');
+                $underDependance[$key][$underDependance] = [$packageParentName => '0'];
+            };
+        }
     }
-  }
 };
 
 var_dump(json_encode($underDependances, JSON_PRETTY_PRINT));
-?>
